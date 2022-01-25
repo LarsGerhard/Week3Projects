@@ -8,7 +8,7 @@ m = 10
 
 c = 0.2
 
-def falling(t, X):
+def falling(t, I):
     """
     RATE_FUNC for Newton's 2nd Law  F = ma
 
@@ -18,15 +18,15 @@ def falling(t, X):
     """
     #  unpack
 
-    y = X[0]
-    v = X[1]
+    y = I[0]
+    v = I[1]
 
     # compute derivatives
     dy = c*(-abs(v**2))
     dv = -g
 
     # pack rate array
-    rate = dy / dv
+    rate = array([dy,dv])
 
     return rate
 
@@ -61,3 +61,4 @@ plot(T, v, label='Velocity')
 xlabel('Seconds')
 ylabel('m or m/s')
 legend()
+show()
