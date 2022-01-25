@@ -15,16 +15,16 @@ Load modules
 """
 
 from scipy.integrate import odeint
-from scipy.constants import hbar
-from numpy import linspace, array, zeros, log, exp, sin, cos, sqrt, pi, e
+from scipy.constants import hbar, eV, c
+from numpy import linspace, arange, array, zeros, log, exp, sin, cos, sqrt, pi, e
 from matplotlib.pyplot import plot, xlabel, ylabel, legend, show, figure, subplot, xlim
 
 """Set parameters for the problem"""
 
-V0 =
-a =
-hbar =
-m =
+V0 = 20
+a = 1.E-11
+
+m = eV / c**2
 
 """\1) Write down the time-independent Schrodinger equation for this problem and 
 convert it from a second-order equation to two first-order ones 
@@ -42,8 +42,9 @@ def schrodinger(x, V):
     psi_p = V[1]
 
     # compute rates
-    dpsi =
-    dpsi_p =
+    dpsi = psi_p
+    V = V0 * (x**2 / a**2)
+    dpsi_p =  - 2 * (m / hbar) * (E - V) * psi
 
     # pack rates into column vector
     rate = array([dpsi, dpsi_p])
@@ -60,52 +61,28 @@ Plot over the range -5a < x < 5a
 
 from matplotlib.pyplot import plot, xlim
 
-psi0 =
-dpsi0 =
-Y0 = array([p0, dp0])  # pack the i.c. into array
+psi0 = 0
+dpsi0 = 1
+Y0 = array([psi0, dpsi0])  # pack the i.c. into array
 
 # set the space interval for solving
-Xstart =
-Xend =
+Xstart = -10
+Xend = 10
 
 # Form space array with 100 points to solve the diff eq
 
-X =
+X = linspace(Xstart,Xend, 100)
 
 # solve the ODE for 3 values of E and
 # make some nice plots
 
 
-E =
-solution = odeint()
+E = 100
+solution = odeint(schrodinger, Y0, X,  tfirst = True)
 # unpack
 psi = solution[:, 0]
-dpsi = out[:, 1]
+dpsi = solution[:, 1]
 
 plot(X, psi)
 xlim(-5 * a, 5 * a)
 
-"""3) A crude way to find the ground-state energy: Let's assume we're able to 
-establish (e.g. from solving the square well) that the ground state energy
-$E_o$ is in the range 100 to 200 eV. The correct value of $E$ will give $\psi(x=+10a)=0$.
-
-a) Create a loop with E  increasing by steps of 2 eV in this range. 
-
-b) Inside the loop (ie for each value of E), solve Schrodinger with i.c. as before.
-
-c) Print out E and $\psi(x=+10a)$ at each step in the loop 
-(what is the last value of the psi array?). Selecting the value of E that comes cloeses by inspecting the output.
-"""
-
-for E in arange():
-    ...
-
-"""4) Now get fancy and create a function of E that returns $\psi(x=+10a)$. Use brenq to solve for E. """
-
-
-def PsiEnd(E):
-    ...
-    return psi[-1]
-
-
-E0 = brentq(...)
