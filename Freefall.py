@@ -1,4 +1,4 @@
-from numpy import linspace, array, arange, log, exp, sin, cos, sqrt, pi, zeros, ones, sign
+from numpy import linspace, array, sign
 
 from scipy.constants import g
 
@@ -22,7 +22,7 @@ def falling(t, X):
 
     # compute derivatives
     dy = v
-    dv = -g
+    dv = -g -sign(v) * c * v**2
 
     # pack rate array
     rate = array([dy,dv])
