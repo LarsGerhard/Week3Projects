@@ -86,3 +86,27 @@ dpsi = solution[:, 1]
 plot(X, psi)
 xlim(-5 * a, 5 * a)
 
+"""3) A crude way to find the ground-state energy: Let's assume we're able to 
+establish (e.g. from solving the square well) that the ground state energy
+$E_o$ is in the range 100 to 200 eV. The correct value of $E$ will give $\psi(x=+10a)=0$.
+
+a) Create a loop with E  increasing by steps of 2 eV in this range. 
+
+b) Inside the loop (ie for each value of E), solve Schrodinger with i.c. as before.
+
+c) Print out E and $\psi(x=+10a)$ at each step in the loop 
+(what is the last value of the psi array?). Selecting the value of E that comes cloeses by inspecting the output.
+
+
+ for E in arange(): 
+    ...
+
+4) Now get fancy and create a function of E that returns $\psi(x=+10a)$. Use brenq to solve for E. 
+
+
+def PsiEnd(E):
+    ...
+    return psi[-1]
+
+
+E0 = brentq(...)"""
