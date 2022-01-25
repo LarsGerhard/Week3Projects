@@ -6,6 +6,8 @@ import numpy as np
 
 m = 10
 
+c = 0.2
+
 def falling(t, X):
     """
     RATE_FUNC for Newton's 2nd Law  F = ma
@@ -20,8 +22,8 @@ def falling(t, X):
     v = X[1]
 
     # compute derivatives
-    dy = v
-    dv = d / (t ** 2)
+    dy = c*(-abs(v**2))
+    dv = -g
 
     # pack rate array
     rate = dy / dv
@@ -32,7 +34,7 @@ def falling(t, X):
 # set some initial conditions
 y0 = 100
 v0 = 20
-Y0 = [y0[i], v0[i]]  # pack the i.c. into a column vector
+Y0 = [y0, v0]  # pack the i.c. into a column vector
 
 # set the time interval for solving
 Tstart = 0
