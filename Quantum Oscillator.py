@@ -15,18 +15,18 @@ Load modules
 """
 
 from scipy.integrate import odeint
-from scipy.constants import hbar, eV, c
-from numpy import linspace, arange, array, zeros, log, exp, sin, cos, sqrt, pi, e
-from matplotlib.pyplot import plot, xlabel, ylabel, legend, show, figure, subplot, xlim
+from scipy.optimize import newton
+from numpy import linspace,array,zeros,log,exp,sin,cos,sqrt,pi,e
+from matplotlib.pyplot import plot,xlabel,ylabel,legend,show, figure, subplot, xlim
 
 """Set parameters for the problem"""
 
-V0 = 20
-a = 1.E-11
+V0= 50
+a=1.e-11 # m
+hbar=197*1e-9 # hbar-c
+m=0.511*1e6 # eV/c2
 
-m = eV / c**2
-
-"""\1) Write down the time-independent Schrodinger equation for this problem and 
+"""1) Write down the time-independent Schrodinger equation for this problem and 
 convert it from a second-order equation to two first-order ones 
 (ie for $\psi$ and $\psi\prime$). 
 Follow the lotka example in python to write a two-variable rate function 
@@ -36,19 +36,28 @@ Create our diff eq
 """
 
 
-def schrodinger(x, V):
+def schrodinger(x, V, E):
     # unpack
     psi = V[0]
     psi_p = V[1]
 
     # compute rates
+    Pot = V0 * (x ** 2 / a ** 2)
+    dpsi_p = -(2 * m / hbar ** 2) * (E - Pot) * psi
     dpsi = psi_p
-    V = V0 * (x**2 / a**2)
-    dpsi_p =  - 2 * (m / hbar) * (E - V) * psi
 
     # pack rates into column vector
     rate = array([dpsi, dpsi_p])
     return rate
+
+def PsiEnd(E):
+    solution = odeint(schrodinger, Y0, X, args=(E,), tfirst=True)
+    # unpack
+    psi = solution[:, 0]
+    dpsi = solution[:, 1]
+
+
+    return psi[-1]
 
 
 """2) Use odeing to solve a test case for  E = 413 eV. Set the initial 
@@ -59,54 +68,33 @@ Plot over the range -5a < x < 5a
 
 """
 
-from matplotlib.pyplot import plot, xlim
-
 psi0 = 0
 dpsi0 = 1
-Y0 = array([psi0, dpsi0])  # pack the i.c. into array
+Y0 = array([psi0, dpsi0]) # pack the i.c. into array
+
 
 # set the space interval for solving
-Xstart = -10
-Xend = 10
+Xstart=-10*a
+Xend = 10*a # 2 years
 
-# Form space array with 100 points to solve the diff eq
+# Form Time array
 
-X = linspace(Xstart,Xend, 100)
+X = linspace(Xstart,Xend,100)
 
 # solve the ODE for 3 values of E and
 # make some nice plots
 
 
-E = 100
-solution = odeint(schrodinger, Y0, X,  tfirst = True)
+E = 66.62830653653002
+
+Elevel = newton(PsiEnd,E)
+
+solution = odeint(schrodinger, Y0, X, args=(Elevel,), tfirst=True)
 # unpack
-psi = solution[:, 0]
-dpsi = solution[:, 1]
+psi = solution[:,0]
+dpsi = solution[:,1]
 
-plot(X, psi)
-xlim(-5 * a, 5 * a)
+plot(X[30:-30],psi[30:-30])
+xlim(-5*a,5*a)
+show()
 
-"""3) A crude way to find the ground-state energy: Let's assume we're able to 
-establish (e.g. from solving the square well) that the ground state energy
-$E_o$ is in the range 100 to 200 eV. The correct value of $E$ will give $\psi(x=+10a)=0$.
-
-a) Create a loop with E  increasing by steps of 2 eV in this range. 
-
-b) Inside the loop (ie for each value of E), solve Schrodinger with i.c. as before.
-
-c) Print out E and $\psi(x=+10a)$ at each step in the loop 
-(what is the last value of the psi array?). Selecting the value of E that comes cloeses by inspecting the output.
-
-
- for E in arange(): 
-    ...
-
-4) Now get fancy and create a function of E that returns $\psi(x=+10a)$. Use brenq to solve for E. 
-
-
-def PsiEnd(E):
-    ...
-    return psi[-1]
-
-
-E0 = brentq(...)"""
